@@ -9,7 +9,7 @@ import (
 	"gorm_app/config"
 )
 
-var templates = template.Must(template.ParseFiles("app/views/edit.html", "app/views/view.html"))
+var templates = template.Must(template.ParseFiles("app/views/edit.html", "app/views/view.html", "app/views/new.html"))
 var validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
 
 func renderTemplates() {
@@ -18,6 +18,10 @@ func renderTemplates() {
 
 func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 	templates.ExecuteTemplate(w, "view.html", nil)
+}
+
+func newHandler(w http.ResponseWriter, r *http.Request) {
+	templates.ExecuteTemplate(w, "new.html", nil)
 }
 
 func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
@@ -32,5 +36,6 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.Handl
 
 func StartWebServer() error {
 	http.HandleFunc("/view/", makeHandler(viewHandler))
+	http.HandleFunc("/new/", newHandler)
 	return http.ListenAndServe(fmt.Sprintf(":%s", config.Config.Port), nil)
 }
