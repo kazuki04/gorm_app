@@ -1,5 +1,9 @@
 package main
 
-func main() {
+import (
+	"gorm_app/app/controllers"
+)
 
+func main() {
+	controllers.StartWebServer()
 }
