@@ -9,3 +9,7 @@ type Article struct {
 	Title string
 	Body  []byte
 }
+
+func (article *Article) Create() {
+	db.Create(&Article{Title: article.Title, Body: article.Body})
+}
