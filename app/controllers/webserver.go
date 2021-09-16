@@ -45,5 +45,6 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 func StartWebServer() error {
 	http.HandleFunc("/view/", makeHandler(viewHandler))
 	http.HandleFunc("/new/", newHandler)
+	http.HandleFunc("/save/", saveHandler)
 	return http.ListenAndServe(fmt.Sprintf(":%s", config.Config.Port), nil)
 }
