@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"gorm_app/app/models"
 	"html/template"
 	"net/http"
 	"regexp"
@@ -32,6 +33,13 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.Handl
 		}
 		fn(w, r, m[2])
 	}
+}
+
+func saveHandler(w http.ResponseWriter, r *http.Request) {
+	body := r.FormValue("body")
+	article := &models.Article{Title: r.FormValue("title"), Body: []byte(body)}
+	article.Create()
+	templates.ExecuteTemplate(w, "view.html", nil)
 }
 
 func StartWebServer() error {
