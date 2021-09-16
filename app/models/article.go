@@ -13,3 +13,7 @@ type Article struct {
 func (article *Article) Create() {
 	db.Create(&Article{Title: article.Title, Body: article.Body})
 }
+
+func (article *Article) Update() {
+	db.Model(&article).Updates(Article{Title: article.Title, Body: article.Body})
+}
