@@ -3,15 +3,15 @@ package controllers
 import (
 	"fmt"
 	"gorm_app/app/models"
+	"gorm_app/config"
 	"html/template"
 	"net/http"
 	"regexp"
-
-	"gorm_app/config"
+	"strconv"
 )
 
-var templates = template.Must(template.ParseFiles("app/views/edit.html", "app/views/view.html", "app/views/new.html"))
-var validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
+var templates = template.Must(template.ParseFiles("app/views/edit.html", "app/views/view.html", "app/views/new.html", "app/views/show.html"))
+var validPath = regexp.MustCompile("^/(edit|save|view|show)/([a-zA-Z0-9]+)$")
 
 func renderTemplates() {
 
@@ -42,9 +42,17 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 	templates.ExecuteTemplate(w, "view.html", nil)
 }
 
+func showHandler(w http.ResponseWriter, r *http.Request) {
+	m := validPath.FindStringSubmatch(r.URL.Path)
+	id, _ := strconv.Atoi(m[2])
+	article := models.FindArticle(id)
+	templates.ExecuteTemplate(w, "show.html", article)
+}
+
 func StartWebServer() error {
 	http.HandleFunc("/view/", makeHandler(viewHandler))
 	http.HandleFunc("/new/", newHandler)
 	http.HandleFunc("/save/", saveHandler)
+	http.HandleFunc("/show/", showHandler)
 	return http.ListenAndServe(fmt.Sprintf(":%s", config.Config.Port), nil)
 }
