@@ -24,8 +24,9 @@ func newHandler(w http.ResponseWriter, r *http.Request) {
 func saveHandler(w http.ResponseWriter, r *http.Request) {
 	body := r.FormValue("body")
 	article := &models.Article{Title: r.FormValue("title"), Body: []byte(body)}
-	article.Create()
-	templates.ExecuteTemplate(w, "index.html", nil)
+	article = article.Create()
+	fmt.Println(article.ID)
+	http.Redirect(w, r, fmt.Sprintf("/show/%d", int(article.ID)), http.StatusFound)
 }
 
 func showHandler(w http.ResponseWriter, r *http.Request) {

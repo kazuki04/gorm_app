@@ -10,8 +10,10 @@ type Article struct {
 	Body  []byte
 }
 
-func (article *Article) Create() {
-	db.Create(&Article{Title: article.Title, Body: article.Body})
+func (article *Article) Create() *Article {
+	article = &Article{Title: article.Title, Body: article.Body}
+	db.Create(&article)
+	return article
 }
 
 func (article *Article) Update() {
