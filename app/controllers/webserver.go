@@ -46,7 +46,6 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, models.Article)) ht
 		article := models.FindArticle(id)
 		fn(w, r, article)
 	}
-
 }
 
 func StartWebServer() error {
