@@ -29,24 +29,31 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/show/%d", int(article.ID)), http.StatusFound)
 }
 
-func showHandler(w http.ResponseWriter, r *http.Request) {
-	m := validPath.FindStringSubmatch(r.URL.Path)
-	id, _ := strconv.Atoi(m[2])
-	article := models.FindArticle(id)
+func showHandler(w http.ResponseWriter, r *http.Request, article models.Article) {
 	templates.ExecuteTemplate(w, "show.html", article)
 }
 
-func editHandler(w http.ResponseWriter, r *http.Request) {
-	m := validPath.FindStringSubmatch(r.URL.Path)
-	id, _ := strconv.Atoi(m[2])
-	article := models.FindArticle(id)
+func editHandler(w http.ResponseWriter, r *http.Request, article models.Article) {
 	templates.ExecuteTemplate(w, "edit.html", article)
+}
+
+func makeHandler(fn func(http.ResponseWriter, *http.Request, models.Article)) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		m := validPath.FindStringSubmatch(r.URL.Path)
+		fmt.Println(m)
+		id, _ := strconv.Atoi(m[2])
+		fmt.Println(id)
+		article := models.FindArticle(id)
+		fn(w, r, article)
+	}
+
 }
 
 func StartWebServer() error {
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/new/", newHandler)
 	http.HandleFunc("/save/", saveHandler)
-	http.HandleFunc("/show/", showHandler)
+	http.HandleFunc("/show/", makeHandler(showHandler))
+	http.HandleFunc("/edit/", makeHandler(editHandler))
 	return http.ListenAndServe(fmt.Sprintf(":%s", config.Config.Port), nil)
 }
