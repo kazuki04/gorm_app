@@ -36,6 +36,13 @@ func showHandler(w http.ResponseWriter, r *http.Request) {
 	templates.ExecuteTemplate(w, "show.html", article)
 }
 
+func editHandler(w http.ResponseWriter, r *http.Request) {
+	m := validPath.FindStringSubmatch(r.URL.Path)
+	id, _ := strconv.Atoi(m[2])
+	article := models.FindArticle(id)
+	templates.ExecuteTemplate(w, "edit.html", article)
+}
+
 func StartWebServer() error {
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/new/", newHandler)
