@@ -25,7 +25,6 @@ func saveHandler(w http.ResponseWriter, r *http.Request) {
 	body := r.FormValue("body")
 	article := &models.Article{Title: r.FormValue("title"), Body: []byte(body)}
 	article = article.Create()
-	fmt.Println(article.ID)
 	http.Redirect(w, r, fmt.Sprintf("/show/%d", int(article.ID)), http.StatusFound)
 }
 
@@ -40,9 +39,7 @@ func editHandler(w http.ResponseWriter, r *http.Request, article models.Article)
 func makeHandler(fn func(http.ResponseWriter, *http.Request, models.Article)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		m := validPath.FindStringSubmatch(r.URL.Path)
-		fmt.Println(m)
 		id, _ := strconv.Atoi(m[2])
-		fmt.Println(id)
 		article := models.FindArticle(id)
 		fn(w, r, article)
 	}
